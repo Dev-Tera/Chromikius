@@ -1,0 +1,16 @@
+# Replace <...>!
+
+[Unit]
+Description=Starts Chromikius and handles notification and restart on crash
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+WorkingDirectory=<path/to/chromikius>
+ExecStart=<path/to/node> ./dist/main.js
+Restart=on-failure
+RestartSec=5
+ExecStopPost=/bin/sh -c '[ "$SERVICE_RESULT" = success ] || curl -s -H "Title: Crash" -H "Tags: warning" -d "$SERVICE_RESULT ($EXIT_STATUS)" ntfy.sh/Chromikius<secret>'
+
+[Install]
+WantedBy=default.target
