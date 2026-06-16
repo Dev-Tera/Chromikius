@@ -1,11 +1,12 @@
 import { Client, EmbedBuilder, Message, TextChannel } from "discord.js"
 import Config from "./Config"
 import Database from "./Database"
+import { RowDataPacket } from "mysql2/promise"
 
-export type SelfroleStats = {
+export interface Selfrole extends RowDataPacket {
     id: string,
     emoji: string,
-    roleId: string,
+    roleId: string, 
     channelId: string,
     messageId: string
 }
