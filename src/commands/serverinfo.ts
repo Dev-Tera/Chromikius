@@ -6,6 +6,8 @@ export default new Command({
         name: "serverinfo",
         description: "Zeigt Informationen über den Server",
     },
+    userPermissions: [],
+    botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
         const createdAt = interaction.guild.createdAt.getDay() + "." + interaction.guild.createdAt.getMonth().toString() + "." + interaction.guild.createdAt.getFullYear().toString()

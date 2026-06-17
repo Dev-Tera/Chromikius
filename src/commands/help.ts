@@ -14,6 +14,8 @@ export default new Command({
 			}
 		],
 	},
+    userPermissions: [],
+    botPermissions: [],
 	allowDm: true,
     execute: async (client, interaction) => {
 		const commandOption = interaction.options.get("command")
@@ -24,7 +26,7 @@ export default new Command({
 			var input_command = null
 		}
 
-        var rawdata = fs.readFileSync("./src/commands.json").toString()
+        var rawdata = fs.readFileSync("../../assets/command-descriptions.json").toString()
     	var commands = JSON.parse(rawdata)
 
 		if (input_command === null) {

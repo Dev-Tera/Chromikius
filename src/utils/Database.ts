@@ -1,7 +1,8 @@
 import mysql, { Connection } from "mysql"
 import { Message } from "discord.js"
-import { selfroleStats, userLevelStats, userWarnStats } from "../types/stats"
+import { userLevelStats, userWarnStats } from "../types/stats"
 import Config from "./Config";
+import { SelfroleStats } from "./Selfroles";
 
 
 export default class Database {
@@ -230,7 +231,8 @@ export default class Database {
     }
 
     static selfrole_remove(id: number | string, reaction: boolean) {
-        return new Promise<selfroleStats | void>(async (resolve, reject) => {
+        return new Promise<SelfroleStats
+            | void>(async (resolve, reject) => {
             if (!Config.database.required) reject(new Error("Although the database is disabled, a connection was required"))
 
             if (reaction) {
@@ -239,13 +241,13 @@ export default class Database {
                     this.db.commit()
                     resolve()
                 } else {
-                    const selfrole = (await this.selfrole_getAll())[id] as selfroleStats
+                    const selfrole = (await this.selfrole_getAll())[id] as SelfroleStats
                     this.db.query(`DELETE FROM selfroles WHERE id = ${selfrole.id}`)
                     this.db.commit()
                     resolve(selfrole)
                 }
             } else {
-                const selfrole = (await this.selfrole_getOne(id as string)) as selfroleStats
+                const selfrole = (await this.selfrole_getOne(id as string)) as SelfroleStats
                 
                 if (selfrole) {
                     this.db.query(`DELETE FROM selfroles WHERE id = ${id}`)
@@ -258,7 +260,7 @@ export default class Database {
     }
 
     static selfrole_getAll() {
-        return new Promise<Array<selfroleStats> >((resolve, reject) => {
+        return new Promise<Array<SelfroleStats> >((resolve, reject) => {
             if (!Config.database.required) reject(new Error("Although the database is disabled, a connection was required"))
 
             this.db.query("SELECT * FROM selfroles", (error, results, fields) => {
@@ -269,7 +271,7 @@ export default class Database {
     }
 
     static selfrole_getOne(id: string) {
-        return new Promise<selfroleStats>((resolve, reject) => {
+        return new Promise<SelfroleStats>((resolve, reject) => {
             if (!Config.database.required) reject(new Error("Although the database is disabled, a connection was required"))
 
             this.db.query(`SELECT * FROM selfroles WHERE id = ${id}`, (error, results, fields) => {
@@ -285,7 +287,7 @@ export default class Database {
     }
 
     static selfrole_getAllByEmoji(emoji: string) {
-        return new Promise<Array<selfroleStats>>((resolve, reject) => {
+        return new Promise<Array<SelfroleStats>>((resolve, reject) => {
             if (!Config.database.required) reject(new Error("Although the database is disabled, a connection was required"))
 
             this.db.query(`SELECT * FROM selfroles WHERE emoji = '${emoji}'`, (error, results, fields) => {

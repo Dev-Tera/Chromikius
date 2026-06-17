@@ -1,9 +1,9 @@
 import { ExtendedClient } from "./structures/Client"
-import CommandStatus from "./utils/CommandStatus"
+import { loadDisabledCommands } from "./utils/AvailableCommands"
 import Database from "./utils/Database"
 
 Database.connect()
-CommandStatus.loadDisabledCommands()
+loadDisabledCommands()
 export const client = new ExtendedClient()
 
 client.start()

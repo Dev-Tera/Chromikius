@@ -6,6 +6,9 @@ export default new Command({
         name: "youtube",
         description: "Kevin Chromiks YouTube Kanal",
     },
+    userPermissions: [],
+    botPermissions: [],
+    allowDm: true,
     execute: async (client, interaction) => {
         const embed = new EmbedBuilder()
             .setColor("#ff9e00")

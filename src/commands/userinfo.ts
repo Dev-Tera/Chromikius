@@ -13,6 +13,8 @@ export default new Command({
             },
         ],
     },
+    userPermissions: [],
+    botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
         const input_member = interaction.options.get("member")
