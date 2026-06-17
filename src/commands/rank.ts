@@ -16,6 +16,9 @@ export default new Command({
             }
         ],
     },
+    userPermissions: [],
+    botPermissions: [],
+    allowDm: true,
     execute: async (client, interaction) => {
         var interactionMember = interaction.options.get("member")
 

@@ -1,7 +1,28 @@
-import { Message, EmbedBuilder, TextChannel } from "discord.js"
+import { Client, EmbedBuilder, Message, TextChannel } from "discord.js"
+import Config from "./Config"
 import Database from "./Database"
 
-export async function create(interaction, descriptionHeader){
+export type SelfroleStats = {
+    id: string,
+    emoji: string,
+    roleId: string,
+    channelId: string,
+    messageId: string
+}
+
+export async function cacheSelfroleMessages(client: Client) {
+    if (Config.database.required) {
+        const selfroles = await Database.selfrole_getAll()
+        const guild = await client.guilds.fetch(Config.guild.id)
+
+        selfroles.forEach(async selfrole => {
+            const channel = await guild.channels.fetch(selfrole.channelId) as TextChannel
+            const message = await channel.messages.fetch(selfrole.messageId)
+        })
+    }
+}
+
+export async function createSelfroleEmbed(interaction, descriptionHeader){
     const selfroles = await Database.selfrole_getAll()
 
         var description = descriptionHeader

@@ -1,8 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { Command } from "../structures/Command";
-import { commandExists } from "../utils/checkCommand";
-import CommandStatus from "../utils/CommandStatus";
 import Database from "../utils/Database";
+import { enableCommand } from "../utils/AvailableCommands";
 
 export default new Command({
     data: {
@@ -18,13 +17,14 @@ export default new Command({
         ]
     },
     userPermissions: ["Administrator"],
+    botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
         const command = interaction.options.get("command").value as string
 
-        if (commandExists(command)) {
+        if (client.commands.has(command)) {
             if (await Database.enableCommand(command)) {
-                CommandStatus.removeFromCache(command)
+                enableCommand(command)
 
                 const embed = new EmbedBuilder()
                     .setColor("#03ff46")

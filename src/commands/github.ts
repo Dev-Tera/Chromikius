@@ -6,6 +6,9 @@ export default new Command({
         name: "github",
         description: "Link zu Kevin Chromiks GitHub Profile"
     },
+    userPermissions: [],
+    botPermissions: [],
+    allowDm: true,
     execute: async (client, interaction) => {
         const embed = new EmbedBuilder()
                 .setColor("#ff9e00")

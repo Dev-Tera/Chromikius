@@ -16,6 +16,7 @@ export default new Command({
         ]
     },
     userPermissions: ["ManageRoles", "KickMembers", "BanMembers"],
+    botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
         const member = interaction.options.get("member").user

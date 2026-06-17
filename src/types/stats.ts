@@ -5,11 +5,3 @@ export type userLevelStats = {
 } | undefined
 
 export type userWarnStats = number
-
-export type selfroleStats = {
-    id: string,
-    emoji: string,
-    roleId: string,
-    channelId: string,
-    messageId: string
-}
