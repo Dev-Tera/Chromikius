@@ -13,6 +13,6 @@ export default new Event("messageCreate", async (message: Message) => {
     }
 
     if (message.channelId === Config.guild.surveyChannelId) {
-        message.react("<:Ja:724324262768279592>").catch(error => { if (error.message !== "Reaction blocked") console.error(error) }).then(() => message.react("<:Nein:724325055923879989>")).catch(error => { if (error.message !== "Reaction blocked") console.error(error)})
+        message.react(message.guild.emojis.cache.get(Config.guild.emojiIds.surveyYes)).catch(error => { if (error.message !== "Reaction blocked") console.error(error) }).then(() => message.react(message.guild.emojis.cache.get(Config.guild.emojiIds.surveyNo))).catch(error => { if (error.message !== "Reaction blocked") console.error(error)})
     }
 })
