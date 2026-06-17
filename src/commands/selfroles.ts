@@ -1,13 +1,15 @@
 import { Command } from "../structures/Command"
-import { create } from "../utils/selfrolesEmbedCreator"
+import { createSelfroleEmbed } from "../utils/Selfroles"
 
 export default new Command({
     data: {
         name: "selfroles",
         description: "Listet alle Selfroles auf",
     },
-    allowDm: false,
+    userPermissions: [],
+    botPermissions: [],
+    allowDm: true,
     execute: async (client, interaction) => {
-        interaction.reply({ embeds: [await create(interaction, "")] })
+        interaction.reply({ embeds: [await createSelfroleEmbed(interaction, "")] })
     }
 })

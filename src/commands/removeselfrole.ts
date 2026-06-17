@@ -1,9 +1,7 @@
 import { EmbedBuilder, User } from "discord.js";
 import { Command } from "../structures/Command";
-import { selfroleStats } from "../types/stats";
-import { cacheMessages } from "../utils/cacheSelfroleMessages";
 import Database from "../utils/Database";
-import { create } from "../utils/selfrolesEmbedCreator";
+import { cacheSelfroleMessages, createSelfroleEmbed, SelfroleStats } from "../utils/Selfroles";
 
 export default new Command({
     data: {
@@ -18,13 +16,14 @@ export default new Command({
         ]
     },
     userPermissions: ["Administrator"],
+    botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
         const selfroleId = interaction.options.get("id")
 
         if (selfroleId) {
-            const selfrole = await Database.selfrole_remove(selfroleId.value as string, false) as selfroleStats
-            cacheMessages(client)
+            const selfrole = await Database.selfrole_remove(selfroleId.value as string, false) as SelfroleStats
+            cacheSelfroleMessages(client)
 
             const embed = new EmbedBuilder()
                 .setColor("#fc030b")
@@ -42,7 +41,7 @@ export default new Command({
             const selfrolesLength = (await Database.selfrole_getAll()).length
 
             const descriptionHeader = "Gebe `/removeselfrole [ID]` ein oder reagiere auf diese Nachricht um eine Selfrole zu löschen\nReagiere mit ❌ um alle zu löschen.\n"
-            const msg = await interaction.reply({ embeds: [await create(interaction, descriptionHeader)], fetchReply: true}) as any
+            const msg = await interaction.reply({ embeds: [await createSelfroleEmbed(interaction, descriptionHeader)], fetchReply: true}) as any
             
             const allowedReactions = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "❌"]
 
@@ -105,7 +104,7 @@ export default new Command({
                         
                         if (answer.emoji.name === "❌") return
                         await Database.selfrole_remove(emojiNames[reaction.emoji.name], true)
-                        cacheMessages(client)
+                        cacheSelfroleMessages(client)
 
                         const embed = new EmbedBuilder()
                             .setColor("#fc030b")
@@ -113,8 +112,8 @@ export default new Command({
                         interaction.channel.send({ embeds: [embed] })
                     })
                 } else {
-                    const selfrole = await Database.selfrole_remove(emojiNames[reaction.emoji.name], true) as selfroleStats
-                    cacheMessages(client)
+                    const selfrole = await Database.selfrole_remove(emojiNames[reaction.emoji.name], true) as SelfroleStats
+                    cacheSelfroleMessages(client)
                     
                     const embed = new EmbedBuilder()
                         .setColor("#fc030b")

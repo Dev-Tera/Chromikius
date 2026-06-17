@@ -3,9 +3,9 @@ import { ExtendedClient } from "./Client"
 
 export type CommandProperties = {
     data: ChatInputApplicationCommandData
-    userPermissions?: Array<PermissionResolvable>
-    botPermissions?:Array<PermissionResolvable>
-    allowDm?: boolean
+    userPermissions: Array<PermissionResolvable>
+    botPermissions:Array<PermissionResolvable>
+    allowDm: boolean
     execute: (client: ExtendedClient, interaction: ChatInputCommandInteraction) => void
 }
 
