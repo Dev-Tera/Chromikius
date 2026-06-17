@@ -21,6 +21,11 @@ export interface GuildSettings {
     welcomeChannelId: string
     memberRoleId: string
     muteRoleId: string
+    emojiIds: {
+        levelUp: string 
+        surveyYes: string
+        surveyNo: string
+    }
 }
 
 export default class Config {
