@@ -1,5 +1,5 @@
-import { LevelsystemMember } from "../../types/LevelsystemMember";
 import Config from "../Config";
+import { LevelsystemMember } from "../Levelsystem";
 import Queries from "./Queries";
 
 export default class LevelsystemQueries extends Queries {

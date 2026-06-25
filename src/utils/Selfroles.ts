@@ -12,19 +12,28 @@ export interface Selfrole extends RowDataPacket {
 }
 
 export async function cacheSelfroleMessages(client: Client) {
-    if (Config.database.required) {
-        const selfroles = await Database.selfrole_getAll()
-        const guild = await client.guilds.fetch(Config.guild.id)
+    const selfroles = await Database.selfroles.getAll()
+    const guild = await client.guilds.fetch(Config.guild.id)
 
-        selfroles.forEach(async selfrole => {
-            const channel = await guild.channels.fetch(selfrole.channelId) as TextChannel
-            const message = await channel.messages.fetch(selfrole.messageId)
-        })
+    for (const selfrole of selfroles) {
+        try {
+            const channel = await guild.channels.fetch(selfrole.channelId)
+            if (channel.isTextBased()) await channel.messages.fetch(selfrole.messageId)
+            else console.warn(`Selfroles.cacheSelfroleMessages: Cant't cache ${selfrole.messageId}. Provided Channel (${channel.name}, ${channel.id}) is not TextBased`)
+
+        } catch (err) {
+            console.warn(`Selfroles.cacheSelfroleMessages: Couldn't cache Channel: ${selfrole.channelId} and Message: ${selfrole.messageId}`)
+        }
     }
+
+    selfroles.forEach(async selfrole => {
+        const channel = await guild.channels.fetch(selfrole.channelId) as TextChannel
+        const message = await channel.messages.fetch(selfrole.messageId)
+    })
 }
 
 export async function createSelfroleEmbed(interaction, descriptionHeader){
-    const selfroles = await Database.selfrole_getAll()
+    const selfroles = await Database.selfroles.getAll()
 
         var description = descriptionHeader
         for (var selfrole of selfroles) {

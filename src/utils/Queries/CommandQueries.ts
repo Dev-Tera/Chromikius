@@ -1,4 +1,4 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2"
+import { RowDataPacket } from "mysql2"
 import Config from "../Config"
 import Queries from "./Queries"
 
@@ -10,17 +10,17 @@ export default class CommandQueries extends Queries{
     /**
         * @returns Number of disabled commands
     */
-    async disable(commands: string[]): Promise<number> {
+    async disable(commands: string[]) {
         if (!Config.database.required) {
             console.warn("CommandQueries.disable: Database disabled. Cannot disable command")
-            return 0
         }
 
+        if (commands.length == 0) return
+
         try {
-            const [result] = await this.pool.query<ResultSetHeader>(`INSERT IGNORE INTO disabled_commands (name)
+            await this.pool.query(`INSERT IGNORE INTO disabled_commands (name)
                                                                     VALUES ?`,
                                                                     [commands.map(name => [name])])
-            return result.affectedRows
         } catch (err) {
             console.warn("CommandQueries.disabled: Couldn't disable command")
             console.warn(err)
@@ -46,17 +46,17 @@ export default class CommandQueries extends Queries{
     /**
         * @returns Number of enabled commands
     */
-    async enable(commands: string[]): Promise<number> {
+    async enable(commands: string[]) {
         if (!Config.database.required) {
             console.warn("CommandQueries.enable: Database disabled. Cannot enable command")
-            return 0
         }
 
+        if (commands.length == 0) return
+
         try {
-            const [result] = await this.pool.query<ResultSetHeader>(`DELETE FROM disabled_commands
+            await this.pool.query(`DELETE FROM disabled_commands
                                                    WHERE name IN (?)`,
                                                    commands)
-            return result.affectedRows
         } catch (err) {
             console.warn("CommandQueries.enable: Couldn't enable command")
             console.warn(err)

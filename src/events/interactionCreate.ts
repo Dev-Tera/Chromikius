@@ -16,7 +16,10 @@ export default new Event("interactionCreate", async (interaction) => {
     // ---IsValidCommand---------------------------------
     if (!interaction.isChatInputCommand()) return
     const command = client.commands.get(interaction.commandName)
-    if (!command) interaction.reply({ content: "Das ist kein gültiger command", ephemeral: true })
+    if (!command) {
+        interaction.reply({ content: "Das ist kein gültiger command", ephemeral: true })
+        return
+    } 
 
     // ---MissingPermissions?----------------------------
     if (!guild || !clientMember) await fetchGuildAndClientMember()
@@ -30,6 +33,7 @@ export default new Event("interactionCreate", async (interaction) => {
             return
         }
     }
+
     const missingCommandPermissions = missingPermissionFor(
         command,
         member,
@@ -42,8 +46,9 @@ export default new Event("interactionCreate", async (interaction) => {
     }
 
     // ---CommandDisabled?------------------------------- 
-    if (isCommandDisabled(command.data.name)) {
+    if (await isCommandDisabled(command.data.name)) {
         interaction.reply({ embeds: [new EmbedBuilder().setColor("#fc030b").setTitle("Der Command `" + command.data.name + "` ist deaktiviert")], ephemeral: true })
+        return
     }
 
     // ---ExecuteCommand--------------------------------- 
