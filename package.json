@@ -24,7 +24,6 @@
   "dependencies": {
     "canvas": "^3.2.3",
     "discord.js": "^14.15.3",
-    "mysql": "^2.18.1",
     "mysql2": "^3.22.5"
   },
   "devDependencies": {

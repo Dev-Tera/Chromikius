@@ -6,18 +6,14 @@ export default new Event("messageReactionAdd", async (reaction, user) => {
 
     if (user.bot) return
     const member = await reaction.message.guild.members.fetch(user.id)
-    var selfroles = await Database.selfrole_getAllByEmoji(reaction.emoji.name)
+    var selfroles = await Database.selfroles.get(reaction.emoji.name, reaction.message.id)
 
-    if (selfroles === undefined) {
-        selfroles = await Database.selfrole_getAllByEmoji("<:" + reaction.emoji.name + ":" + reaction.emoji.id + ">")
-    }
-
-    if (selfroles != undefined) {
-        for (const selfrole of selfroles) {
-            if (selfrole.messageId === reaction.message.id) {
-                const role = await reaction.message.guild.roles.fetch(selfrole.roleId)
-                member.roles.add(role)
-            }
+    for (const selfrole of selfroles) {
+        try {
+            member.roles.add(await reaction.message.guild.roles.fetch(selfrole.roleId))
+        } catch (err) {
+            console.error("messageReactionAdd: Couldn't give selfrole")
+            console.error(err)
         }
     }
 })

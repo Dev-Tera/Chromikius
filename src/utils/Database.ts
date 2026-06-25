@@ -10,7 +10,7 @@ export default class Database {
     public static levelsystem: LevelsystemQueries
     public static commands: CommandQueries
 
-    static async connect(){
+    static async connect() {
        this.pool = mysql.createPool({
            host: Config.database.host,
            database: Config.database.databaseName,
@@ -19,6 +19,16 @@ export default class Database {
            waitForConnections: true,
            enableKeepAlive: true
        }) 
+
+       try {
+           const con = await this.pool.getConnection()
+           con.release()
+       } catch (err) {
+            if (err instanceof AggregateError) {
+                console.warn("Database refused connection")
+            }
+            throw err
+       }
 
        this.selfroles = new SelfroleQueries(this.pool)
        this.levelsystem = new LevelsystemQueries(this.pool)

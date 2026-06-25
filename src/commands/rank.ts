@@ -1,8 +1,9 @@
 import { AttachmentBuilder, EmbedBuilder } from "discord.js"
 import { Command } from "../structures/Command"
-import { userLevelStats } from "../types/stats"
 import Database from "../utils/Database"
 import { createCanvas, loadImage, registerFont } from "canvas"
+import { LevelsystemMember } from "../utils/Levelsystem"
+import { stat } from "node:fs"
 
 export default new Command({
     data: {
@@ -47,8 +48,9 @@ export default new Command({
             return
         }
 
-        const stats: userLevelStats = await Database.levelsystem_get_stats(member.id)
-        if (stats === undefined) {
+        // const stats: levels = await Database.levelsystem_get_stats(member.id)
+        const stats: LevelsystemMember = await Database.levelsystem.get(member.id)
+        if (stats.level == 0) {
             const embed = new EmbedBuilder()
                 .setColor("#fc030b")
                 .setTitle("Dieser User hat noch keine Nachricht verfasst")
@@ -82,10 +84,12 @@ export default new Command({
         ctx.fillText("xp:", 700, labelTextHeight)
         ctx.fillText(stats.xp.toString(), 700, textHeight)
 
-        const levelUp = stats.level * stats.level
-        const currentLevelUp = (stats.level - 1) * (stats.level - 1)
-        const requiredXpInPercent = 100 / (levelUp - currentLevelUp) * (stats.xp - currentLevelUp)
-        const requiredSymbols = requiredXpInPercent / 10
+        const requiredXpForCurrentLevel = stats.level**2
+        const requiredXpForLevelUp = (stats.level+1) ** 2
+
+        const xpProgressPercent = 100 / (requiredXpForLevelUp - requiredXpForCurrentLevel) * (stats.xp - requiredXpForCurrentLevel)
+
+        const requiredSymbols = xpProgressPercent / 10
 
         var progressBar = ""
         var a = 1

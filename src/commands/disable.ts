@@ -1,17 +1,16 @@
-import { EmbedBuilder } from "discord.js";
-import { Command } from "../structures/Command";
-import Database from "../utils/Database";
-import { disableCommand } from "../utils/AvailableCommands";
+import { EmbedBuilder } from "discord.js"
+import { Command } from "../structures/Command"
+import { disableCommands } from "../utils/AvailableCommands"
 
 export default new Command({
     data: {
         name: "disable",
-        description: "Deaktiviert einen Command",
+        description: "Deaktiviere Commands",
         options: [
             {
                 type: 3,
-                name: "command",
-                description: "Der Command der deaktiviert werden soll",
+                name: "commands",
+                description: "Die Commands mit ; getrennt welche deaktiviert werden sollen",
                 required: true
             }
         ]
@@ -20,28 +19,34 @@ export default new Command({
     botPermissions: [],
     allowDm: false,
     execute: async (client, interaction) => {
-        const command = interaction.options.get("command").value as string
+        const commandOptions = interaction.options.get("commands").value as string
+        const commmandsToDeactivateInput = commandOptions.replace(/\s+/g, "").split(";")
 
-        if (client.commands.has(command)) {
-            if (await Database.disableCommand(command)) {
-                disableCommand(command)
+        const commandsToDeactivate = new Array()
+        const invalidCommands = new Array()
+        commmandsToDeactivateInput.forEach(command => {
+            if (client.commands.has(command)) commandsToDeactivate.push(command)
+            else invalidCommands.push(command)
+        })
 
+        const alreadyDeactivatedCommands = await disableCommands(commandsToDeactivate)
 
-                const embed = new EmbedBuilder()
-                    .setColor("#03ff46")
-                    .setTitle("`" + command + "` wurde deaktiviert")
-                interaction.reply({ embeds: [embed] })
-            } else {
-                const embed = new EmbedBuilder()
-                    .setColor("#fc030b")
-                    .setTitle("`" + command + "` ist bereits deaktiviert")
-                interaction.reply({ embeds: [embed] })
-            }
-        } else {
-            const embed = new EmbedBuilder()
-                .setColor("#fc030b")
-                .setTitle("Der Command `" + command + "` existiert nicht")
-            interaction.reply({ embeds: [embed], ephemeral: true })
+        const disabledCommands = commandsToDeactivate.filter(command => !alreadyDeactivatedCommands.includes(command))
+
+        const embed = new EmbedBuilder().setColor("#03ff46").setTitle("Deaktiviere Commands")
+
+        if (disabledCommands.length != 0) {
+            embed.addFields({ name: "✅ Deaktiviert", value: disabledCommands.join("\n") })
         }
+
+        if (alreadyDeactivatedCommands.length != 0) {
+            embed.addFields({ name: "ℹ️ Bereits deaktiviert", value: alreadyDeactivatedCommands.join("\n") })
+        }
+
+        if (invalidCommands.length != 0) {
+            embed.addFields({ name: "❌ Ungültige Commands", value: invalidCommands.join("\n") })
+        }
+
+        interaction.reply({ embeds: [embed] })
     }
 })
