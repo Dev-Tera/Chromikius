@@ -1,20 +1,14 @@
-import { EmbedBuilder } from "discord.js"
-import { Command } from "../structures/Command"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
+import Command from "../structures/Command"
 import { disableCommands } from "../utils/AvailableCommands"
 
 export default new Command({
-    data: {
-        name: "disable",
-        description: "Deaktiviere Commands",
-        options: [
-            {
-                type: 3,
-                name: "commands",
-                description: "Die Commands mit ; getrennt welche deaktiviert werden sollen",
-                required: true
-            }
-        ]
-    },
+    data: new SlashCommandBuilder()
+        .setName("disable")
+        .setDescription("Deaktviere Commands")
+        .addStringOption((opt) => opt.setName("commands")
+                        .setDescription("Die Commands mit ; getrennt welche deaktiviert werden sollen")
+                        .setRequired(true)),
     userPermissions: ["Administrator"],
     botPermissions: [],
     allowDm: false,

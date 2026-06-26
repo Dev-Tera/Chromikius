@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, PermissionResolvable } from "discord.js"
 import Database from "./Database"
-import { CommandProperties } from "../structures/Command"
+import Command from "../structures/Command"
 
 let disabledCommands: Array<string>
 
@@ -57,7 +57,7 @@ interface MissingCommandPermissions {
     client: Array<PermissionResolvable>
 }
 
-export function missingPermissionFor(command: CommandProperties, member: GuildMember, client: GuildMember): MissingCommandPermissions {
+export function missingPermissionFor(command: Command, member: GuildMember, client: GuildMember): MissingCommandPermissions {
     const missingCommandPermissions: MissingCommandPermissions = {
         member: new Array(),
         client: new Array()

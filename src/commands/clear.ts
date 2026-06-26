@@ -1,50 +1,40 @@
-import { EmbedBuilder, TextChannel } from "discord.js";
-import { Command } from "../structures/Command";
+import { EmbedBuilder, SlashCommandBuilder, TextChannel } from "discord.js";
 import delay from "../utils/delay";
+import Command from "../structures/Command";
 
 export default new Command({
-    data: {
-        name: "clear",
-        description: "Löscht Nachrichten",
-        options: [
-            {
-                type: 4,
-                name: "anzahl",
-                description: "Anzahl der Nachrichten die gelöscht werden soll",
-            },
-        ]
-    },
+    data: new SlashCommandBuilder()
+        .setName("clear")
+        .setDescription("Löscht die letzten Nachrichten")
+        .addIntegerOption((opt) => opt.setName("anzahl")
+                         .setDescription("Anzahl der letzten Nachrichten welche gelöscht werden sollen")
+                         .setRequired(false)),
     userPermissions: ["ManageMessages", "ReadMessageHistory"],
     botPermissions: ["ManageMessages", "ReadMessageHistory"],
     allowDm: false,
     execute: async (client, interaction) => {
-        const input = interaction.options.get("anzahl")
+        const numToBeDeletedInput = interaction.options.get("anzahl")
+        let numToBeDeleted: number
+        if (numToBeDeletedInput == null) numToBeDeleted = 1
+        else numToBeDeleted = numToBeDeletedInput.value as number
 
-        if (input === null) var messsagesToBeDeleted = 1
-        else var messsagesToBeDeleted = Number(input.value)
-
-        if (messsagesToBeDeleted <= 0) {
+        if (numToBeDeleted <= 0) {
             const embed = new EmbedBuilder()
                 .setColor("#fc030b")
                 .setTitle("Du musst eine Zahl über 0 angeben")
             interaction.reply({ embeds: [embed], ephemeral: true })
-        } else {
-            const channel = await interaction.guild.channels.fetch(interaction.channelId) as TextChannel
-            const messages = (await channel.messages.fetch({ limit: messsagesToBeDeleted }))
-            await channel.bulkDelete(messages, true).then(deletedMessages => {
-                messages.filter(message => !deletedMessages.has(message.id))
-                .forEach(message => message.delete())
-            })
-
-            const embed = new EmbedBuilder()
-                .setColor("#ff9e00")
-                .setDescription(messsagesToBeDeleted + ". Nachrichten wurden gelöscht")
-                .setFooter({ text: "Wird in 5 sek. gelöscht" })
-            interaction.reply({ embeds: [embed] })
-            await delay(5000)
-            interaction.deleteReply()
+            return
         }
 
-        
+        const messages = await interaction.channel.messages.fetch({ limit: numToBeDeleted })
+        await interaction.channel.bulkDelete(messages, true)
+
+        const embed = new EmbedBuilder()
+            .setColor("#ff9e00")
+            .setTitle(`${numToBeDeleted} Nachrichten wurden gelöscht`)
+            .setFooter({ text: "Diese Info wird in 3 sek. gelöscht" })
+        interaction.reply({ embeds: [embed] })
+        await delay(3000)
+        interaction.deleteReply()
     }
 })
