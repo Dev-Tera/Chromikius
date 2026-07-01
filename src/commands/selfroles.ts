@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import Command from "../structures/Command"
 import Database from "../utils/Database"
 import { createSelfroleEmbed } from "../utils/Selfroles"
@@ -11,6 +11,12 @@ export default new Command({
     botPermissions: [],
     allowDm: true,
     execute: async (client, interaction) => {
-        interaction.reply({ embeds: [await createSelfroleEmbed(await Database.selfroles.getAll(), interaction.guild)] })
+        const selfroles = await Database.selfroles.getAll()
+
+        let embed: EmbedBuilder
+        if (selfroles.length == 0) embed = new EmbedBuilder().setTitle("Es sind keine Selfroles registriert").setColor("#ff9e00")
+        else embed = await createSelfroleEmbed("Selfroles", selfroles, interaction.guild)
+
+        interaction.reply({ embeds: [embed] })
     }
 })
