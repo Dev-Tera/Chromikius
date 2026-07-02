@@ -34,12 +34,3 @@ CREATE TABLE `selfroles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Table structure for table `warnsystem`
---
-
-DROP TABLE IF EXISTS `warnsystem`;
-CREATE TABLE `warnsystem` (
-  `id` bigint(20) DEFAULT NULL,
-  `warnlevel` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
