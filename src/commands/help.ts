@@ -1,19 +1,13 @@
-import { Command } from "../structures/Command";
-import { EmbedBuilder, TextChannel, User } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, TextChannel, User } from "discord.js";
 import fs from "fs"
+import Command from "../structures/Command";
 
 export default new Command({
-	data: {
-		name: "help",
-		description: "Antwortet mit einer Hilfe zu den Commands",
-		options: [
-			{
-				type: 3,	//3 = STRING
-				name: "command",
-				description: "Enter a command"
-			}
-		],
-	},
+    data: new SlashCommandBuilder()
+        .setName("help")
+        .setDescription("Antwortet mit der Hilfe zu den Commands")
+        .addStringOption((opt) => opt.setName("command")
+                        .setDescription("Der Command zu dem du hilfe möchtest")),
     userPermissions: [],
     botPermissions: [],
 	allowDm: true,
