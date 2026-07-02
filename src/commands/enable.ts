@@ -1,20 +1,14 @@
-import { EmbedBuilder } from "discord.js";
-import { Command } from "../structures/Command";
-import { disableCommands, enableCommands } from "../utils/AvailableCommands";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { enableCommands } from "../utils/AvailableCommands";
+import Command from "../structures/Command";
 
 export default new Command({
-    data: {
-        name: "enable",
-        description: "Aktivierts Commands",
-        options: [
-            {
-                type: 3,
-                name: "commands",
-                description: "Die Commands mit ; getrennt welche aktiviert werden sollen",
-                required: true
-            }
-        ]
-    },
+    data: new SlashCommandBuilder()
+        .setName("enable")
+        .setDescription("Aktiviert Commands")
+        .addStringOption((opt) => opt.setName("commands")
+                        .setDescription("Die Commands mit ; getrennt welche aktiviert werden sollen")
+                        .setRequired(true)),
     userPermissions: ["Administrator"],
     botPermissions: [],
     allowDm: false,

@@ -1,29 +1,22 @@
-import { AttachmentBuilder, EmbedBuilder } from "discord.js"
-import { Command } from "../structures/Command"
+import { AttachmentBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import Database from "../utils/Database"
 import { createCanvas, loadImage, registerFont } from "canvas"
 import { LevelsystemMember } from "../utils/Levelsystem"
-import { stat } from "node:fs"
+import Command from "../structures/Command"
 
 export default new Command({
-    data: {
-        name: "rank",
-        description: "Zeigt dein Level an",
-        options: [
-            {
-                type: 6,
-                name: "member",
-                description: "Member dessen Level angezeigt werden soll"
-            }
-        ],
-    },
+    data: new SlashCommandBuilder()
+        .setName("rank")
+        .setDescription("Zeigt das Level des members")
+        .addUserOption((opt) => opt.setName("member")
+                      .setDescription("Member dessen Level angezeigt werden soll")),
     userPermissions: [],
     botPermissions: [],
     allowDm: true,
     execute: async (client, interaction) => {
         var interactionMember = interaction.options.get("member")
 
-        if (interactionMember) {
+        if (interactionMember == null) {
             var member = interactionMember.user
         } else {
             member = interaction.user
