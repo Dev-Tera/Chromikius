@@ -5,25 +5,25 @@ import { Selfrole } from "../Selfroles";
 
 export default class SelfroleQueries extends Queries{
     /**
-        * @returns whether the selfrole was saved successfully
+        * @returns the new selfrole id, or null on failure
     */
-    async add(emoji: string, roleId: string, channelId: string, messageId: string): Promise<boolean> {
+    async add(emoji: string, roleId: string, channelId: string, messageId: string): Promise<number | null> {
         if(!Config.database.required) {
             console.warn("SelfroleQueries.add: Database disabled. Cannot insert the selfrole.")
-            return false
+            return null
         }
 
         try {
-            await this.pool.query(`INSERT INTO selfroles (emoji, roleId, channelId, messageId)
+            const [result] = await this.pool.query<ResultSetHeader>(`INSERT INTO selfroles (emoji, roleId, channelId, messageId)
                             VALUES (?, ?, ?, ?)`,
                            [emoji, roleId, channelId, messageId])
+
+            return result.insertId
         } catch(err) {
             console.warn("SelfroleQueries.add: Cannot insert the selfrole.")
             console.warn(err)
-            return false
+            return null
         }
-
-        return true
     }
 
     async getAll(): Promise<Array<Selfrole>> {
@@ -64,39 +64,47 @@ export default class SelfroleQueries extends Queries{
     }
     
     /**
-        * @returns number of deleted selfroles
+        * @returns deleted selfroles
     */
-    async remove(ids: number[]): Promise<number> {
+    async remove(ids: number[]): Promise<Selfrole[]> {
         if(!Config.database.required) {
             console.warn("SelfroleQueries.remove: Database disabled. Cannot remove selfroles.")
-            return 0
+            return new Array()
         }
 
         try {
-            const [result] = await this.pool.query<ResultSetHeader>(`DELETE FROM selfroles
-                                WHERE id IN (?)`,
-                               [ids])
-            return result.affectedRows
+            const [result] = await this.pool.query<Selfrole[]>(`SELECT *
+                                                               FROM selfroles
+                                                               WHERE id in (?)`,
+                                                               [ids])
+
+            await this.pool.query(`DELETE FROM selfroles
+                                  WHERE id IN (?)`,
+                                  [ids])
+            return result
         } catch (err) {
             console.warn("SelfroleQueries.remove: Couldn't remove selfroles")
             console.warn(err)
-            return 0 
+            return new Array()
         }
     }
 
-    async removeAll(): Promise<number> {
+    async removeAll(): Promise<Selfrole[]> {
         if(!Config.database.required) {
             console.warn("SelfroleQueries.removeAll: Database disabled. Cannot remove all selfroles.")
-            return 0
+            return new Array()
         }
 
         try {
-            const [result] = await this.pool.query<ResultSetHeader>(`DELETE FROM selfroles`)
-            return result.affectedRows
+            const [result] = await this.pool.query<Selfrole[]>(`SELECT *
+                                                               FROM selfroles`)
+
+            await this.pool.query<ResultSetHeader>(`DELETE FROM selfroles`)
+            return result
         } catch (err) {
             console.warn("SelfroleQueries.removeAll: Couldn't remove all selfroles")
             console.warn(err)
-            return 0
+            return new Array()
         }
     }
 }
