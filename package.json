@@ -27,9 +27,11 @@
     "mysql2": "^3.22.5"
   },
   "devDependencies": {
-    "@types/mysql": "^2.15.26",
     "@types/node": "^25.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "undici": "^6.27.0"
   }
 }

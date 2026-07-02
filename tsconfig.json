@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "es2024",
-    "types": ["node", "mysql"],
+    "types": ["node"],
 
     // Other Outputs
     "sourceMap": true,

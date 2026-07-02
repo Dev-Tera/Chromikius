@@ -21,7 +21,6 @@ export interface GuildSettings {
     welcomeChannelId: string
     moderationChannelId: string
     memberRoleId: string
-    muteRoleId: string
     emojiIds: {
         levelUp: string 
         surveyYes: string

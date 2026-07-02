@@ -3,7 +3,6 @@ import SelfroleQueries from "./Queries/SelfroleQueries";
 import LevelsystemQueries from "./Queries/LevelsystemQueries";
 import CommandQueries from "./Queries/CommandQueries";
 import Config from "./Config";
-import { SelfroleStats } from "./Selfroles";
 
 export default class Database {
     private static pool: Pool
