@@ -2,7 +2,7 @@ import fs from "fs"
 import Config from "./utils/Config"
 import { REST, Routes } from "discord.js"
 
-async function deployCommands() {
+async function registerCommands() {
   const guildCommands = []
   const dmCommands = []
 
@@ -49,4 +49,4 @@ async function deployCommands() {
   })()
 }
 
-deployCommands()
+registerCommands()
