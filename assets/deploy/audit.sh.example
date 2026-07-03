@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Replace <...>!
+
+cd <path/to/chromikius> || exit 1
+audit=$(<path/to/npm audit)
+if [ $? -ne 0 ];then
+    curl \
+        -H "Title: NPM Audit" \
+        -H "Tags: rotating_light" \
+        -d "$audit" \
+        ntfy.sh/chromikius<secret>
+fi

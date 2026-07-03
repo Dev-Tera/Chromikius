@@ -19,6 +19,7 @@ export interface GuildSettings {
     id: string
     surveyChannelId: string
     welcomeChannelId: string
+    moderationChannelId: string
     memberRoleId: string
     muteRoleId: string
     emojiIds: {
