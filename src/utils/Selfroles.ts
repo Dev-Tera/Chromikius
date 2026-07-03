@@ -74,10 +74,14 @@ export async function createSelfroleEmbed(title: string, selfroles: Selfrole[], 
                 message = "⚠️" + selfrole.messageId
             }
             
-            description += `\n\`#${selfrole.id}\` ${emoji} ${role} ${channel} ${message}`
+            const row = `\n\`#${selfrole.id}\` ${emoji} ${role} ${channel} ${message}`
+            if (description.length + row.length > 4096 - "\n...".length) {
+                description += "\n..."
+                break
+            } else description += row
         }
 
-        if (description != "") embed.setDescription(description)
+        if (description != "") embed.setDescription(description.slice(0, 4096))
         embed.setFooter({ text: "Elemente mit ⚠️ markiert, existieren nicht mehr oder der Bot hat keinen Zugriff darauf" })
 
         return embed

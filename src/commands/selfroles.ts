@@ -11,12 +11,13 @@ export default new Command({
     botPermissions: [],
     allowDm: true,
     execute: async (client, interaction) => {
+        await interaction.deferReply()
         const selfroles = await Database.selfroles.getAll()
 
         let embed: EmbedBuilder
         if (selfroles.length == 0) embed = new EmbedBuilder().setTitle("Es sind keine Selfroles registriert").setColor("#ff9e00")
         else embed = await createSelfroleEmbed("Selfroles", selfroles, interaction.guild)
 
-        interaction.reply({ embeds: [embed] })
+        interaction.editReply({ embeds: [embed] })
     }
 })
