@@ -1,11 +1,13 @@
-import { EmbedBuilder } from "discord.js";
-import { Command } from "../structures/Command";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import Command from "../structures/Command";
 
 export default new Command({
-    data: {
-        name: "ping",
-        description: "Antwortet mit der Latenz",
-    },
+    data: new SlashCommandBuilder()
+        .setName("ping")
+        .setDescription("Antwortet mit der Latenz"),
+    userPermissions: [],
+    botPermissions: [],
+    allowDm: true,
     execute: async (client, interaction) => {
         const embed = new EmbedBuilder()
             .setColor("#ff9e00")

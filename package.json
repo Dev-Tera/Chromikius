@@ -1,14 +1,16 @@
 {
   "name": "Chromikius",
-  "version": "1.13.5",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "start": "node ./dist/main.js",
+    "start": "node dist/main.js",
     "dev": "NODE_ENV='dev' ts-node src/main.ts",
-    "deploy": "node ./dist/deploy_commands.js",
-    "devDeploy": "NODE_ENV='dev' ts-node src/deploy_commands.ts",
-    "build": "tsc && cp -r ./assets ./dist"
+    "registerCommands": "node dist/register-commands.js",
+    "registerCommandsDev": "NODE_ENV='dev' ts-node src/register-commands.ts",
+    "build": "tsc && cp -r assets dist",
+    "cleanBuild": "rm -rf dist && npm run build",
+    "deploy": "npm install && npm run cleanBuild && npm run registerCommands && npm run start"
   },
   "repository": {
     "type": "git",
@@ -24,12 +26,14 @@
   "dependencies": {
     "canvas": "^3.2.3",
     "discord.js": "^14.15.3",
-    "mysql": "^2.18.1"
+    "mysql2": "^3.22.5"
   },
   "devDependencies": {
-    "@types/mysql": "^2.15.26",
     "@types/node": "^25.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "undici": "^6.27.0"
   }
 }

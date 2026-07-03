@@ -14,7 +14,12 @@
         "id": "GUILD_ID",
         "surveyChannelId": "CHANNEL_ID",
         "welcomeChannelId": "CHANNEL_ID",
+        "moderationChannelId": "CHANNEL_ID",
         "memberRoleId": "ROLE_ID",
-        "muteRoleId": "ROLE_ID"
+        "emojiIds": {
+            "levelUp": "EMOJI_ID",
+            "surveyYes": "EMOJI_ID",
+            "surveyNo": "EMOJI_ID"
+        }
     }
 }
