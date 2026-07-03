@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#
+# Erstellt einen mysqldump der Chromikius-Datenbank.
+# Login-Daten kommen aus config/prod.json, Backups landen in ~/chromikius-backups.
+#
+# Cronjob-Beispiel (täglich um 03:00):
+#   0 3 * * * /pfad/zu/Chromikius/assets/deploy/backup-db.sh
+#
+set -Eeuo pipefail
+
+# Anpassen!!
+BACKUP_DIR="<BACKUP_ORDNER>"          # z.B. /home/deploy/chromikius-backups
+NODE_BIN="<PFAD_ZU_NODE>"             # z.B. /usr/bin/node oder ~/.nvm/versions/node/v22.11.0/bin/node
+NTFY_URL="https://ntfy.sh/chromikius"
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/../../config/prod.json"
+BACKUP_FILE="$BACKUP_DIR/$(date '+%d.%m.%Y-%H:%M').sql"
+
+# $1 = Nachricht, $2 = Tags, $3 = Priority
+notify() {
+    curl -fsS -m 10 \
+        -H "Title: DB-Backup" \
+        -H "Tags: $2" \
+        -d "$1" \
+        "$NTFY_URL" >/dev/null || true
+}
+
+trap 'notify "Backup fehlgeschlagen (Zeile $LINENO)" "rotating_light"' ERR
+
+[ -f "$CONFIG_FILE" ] || { echo "Config nicht gefunden: $CONFIG_FILE" >&2; exit 1; }
+
+# Zugangsdaten in eine temporäre Defaults-Datei schreiben, damit das
+# Passwort nicht in der Prozessliste auftaucht.
+DEFAULTS_FILE="$(mktemp)"
+trap 'rm -f "$DEFAULTS_FILE"' EXIT
+chmod 600 "$DEFAULTS_FILE"
+
+"$NODE_BIN" -e '
+    const db = require(process.argv[1]).database
+    console.log(`[client]\nhost=${db.host}\nuser=${db.userName}\npassword="${db.password}"`);
+' "$CONFIG_FILE" > "$DEFAULTS_FILE"
+
+DB_NAME="$("$NODE_BIN" -e 'console.log(require(process.argv[1]).database.databaseName)' "$CONFIG_FILE")"
+
+mkdir -p "$BACKUP_DIR"
+
+mysqldump --defaults-extra-file="$DEFAULTS_FILE" \
+    --single-transaction \
+    "$DB_NAME" > "$BACKUP_FILE"
+
+echo "Backup geschrieben: $BACKUP_FILE"
+notify "Dump erstellt: $(basename "$BACKUP_FILE") ($(du -h "$BACKUP_FILE" | cut -f1))" "white_check_mark"
+
+find "$BACKUP_DIR" -maxdepth 1 -name '*.sql' -mtime +60 -delete
