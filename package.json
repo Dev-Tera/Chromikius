@@ -4,11 +4,13 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "start": "node ./dist/main.js",
+    "start": "node dist/main.js",
     "dev": "NODE_ENV='dev' ts-node src/main.ts",
-    "deploy": "node ./dist/deploy_commands.js",
-    "devDeploy": "NODE_ENV='dev' ts-node src/deploy_commands.ts",
-    "build": "tsc && cp -r ./assets ./dist"
+    "registerCommands": "node dist/register-commands.js",
+    "registerCommandsDev": "NODE_ENV='dev' ts-node src/register-commands.ts",
+    "build": "tsc && cp -r assets dist",
+    "cleanBuild": "rm -rf dist && npm run build",
+    "deploy": "npm install && npm run cleanBuild && npm run registerCommands && npm run start"
   },
   "repository": {
     "type": "git",
