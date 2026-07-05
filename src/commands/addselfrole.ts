@@ -52,6 +52,8 @@ export default new Command({
                 embed.setTitle("Du hast kein gültiges Emoji angegeben")
             } else if (err.code == RESTJSONErrorCodes.MaximumNumberOfReactionsReached) {
                 embed.setTitle("Die Nachricht hat bereits die maximale Anzahl von Reaktionen (20)")
+            } else if (err.code == RESTJSONErrorCodes.ReactionWasBlocked) {
+                embed.setTitle("Meine Reaktion wurde geblockt")
             } else {
                 embed.setTitle("Etwas ist schief gelaufen")
                 console.warn("addselfrole: Couldn't react with emoji")
